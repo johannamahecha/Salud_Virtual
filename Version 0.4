@@ -1,0 +1,371 @@
+//Entidades//
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SaludVirtual
+{
+    class Entidades
+    {
+ 
+        public string Nit { get; set; }
+        public string NombreEntidad { get; set; }
+        public string Telefono { get; set; }
+        public string Email { get; set; }
+        
+
+        public Entidades() { }
+
+        public Entidades(string pNit, string pNombreEntidad, string pTelefono, string pEmail)
+        {
+            this.Nit = pNit;
+            this.NombreEntidad = pNombreEntidad;
+            this.Telefono = pTelefono;
+            this.Email = pEmail;
+            
+
+        }
+    }
+}
+
+//Entidades DAL//
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
+
+namespace SaludVirtual
+{
+    class EntidadesDAL
+    {
+        public static int CrearEntidades(string pNit, string pNombreEntidad, string pTelefono, string pEmail)
+        {
+            int result = 0;
+            SqlConnection Conn = SaludVirtual.ObtenerConexion();
+            {
+                SqlCommand Comand = new SqlCommand(string.Format("Insert Into RegistroEntidades(Nit,NombreEntidad,Telefono,Email)values('{0}','{1}','{2}','{3}')", pNit, pNombreEntidad, pTelefono, pEmail), Conn);
+                result = Comand.ExecuteNonQuery();
+            }
+            return result;
+        }
+
+
+
+        public static List<Entidades> BuscarEntidades(string pNit, string pNombreEntidad)
+        {
+            List<Entidades> Lista = new List<Entidades>();
+            using (SqlConnection conexion = SaludVirtual.ObtenerConexion())
+            {
+                SqlCommand Comand = new SqlCommand(string.Format("select Nit,NombreEntidad,Telefono,Email from RegistroEntidades where Nit like '%{0}%' and NombreEntidad like '%{1}%'", pNit, pNombreEntidad), conexion);
+
+                SqlDataReader reader = Comand.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Entidades pEntidad = new Entidades();
+                    pEntidad.Nit = reader.GetString(0);
+                    pEntidad.NombreEntidad = reader.GetString(1);
+                    pEntidad.Telefono = reader.GetString(2);
+                    pEntidad.Email = reader.GetString(3);
+
+                    Lista.Add(pEntidad);
+                }
+                conexion.Close();
+                return Lista;
+            }
+        }
+    }
+}
+
+//EntidadesDAL1//
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
+
+namespace SaludVirtual
+{
+    public class EntidadesDAL1
+    {
+        public static int CrearCuenta(string pUsuario, string pContraseña)
+        {
+            int resultado = 0;
+            SqlConnection Conn = SaludVirtual.ObtenerConexion();
+            {
+                SqlCommand Comand = new SqlCommand(string.Format("Insert Into LoginEntidades(usuario,contraseña)values('{0}',HashBytes('MD5','{1}'))", pUsuario, pContraseña), Conn);
+                resultado = Comand.ExecuteNonQuery();
+            }
+            return resultado;
+        }
+        public static int Autentificar(string pUsuario, string pContraseña)
+        {
+            int resultado = -1;
+            SqlConnection Conn = SaludVirtual.ObtenerConexion();
+            SqlCommand Comand = new SqlCommand(string.Format("Select * From LoginEntidades where usuario = '{0}' and HashBytes('MD5','{1}') = contraseña", pUsuario, pContraseña), Conn);
+            SqlDataReader reader = Comand.ExecuteReader();
+            while (reader.Read())
+            {
+                resultado = 50;
+            }
+            Conn.Close();
+            return resultado;
+
+        }
+
+
+
+    }
+}
+
+//GaleriaA//
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
+
+namespace SaludVirtual
+{
+    public class EntidadesDAL1
+    {
+        public static int CrearCuenta(string pUsuario, string pContraseña)
+        {
+            int resultado = 0;
+            SqlConnection Conn = SaludVirtual.ObtenerConexion();
+            {
+                SqlCommand Comand = new SqlCommand(string.Format("Insert Into LoginEntidades(usuario,contraseña)values('{0}',HashBytes('MD5','{1}'))", pUsuario, pContraseña), Conn);
+                resultado = Comand.ExecuteNonQuery();
+            }
+            return resultado;
+        }
+        public static int Autentificar(string pUsuario, string pContraseña)
+        {
+            int resultado = -1;
+            SqlConnection Conn = SaludVirtual.ObtenerConexion();
+            SqlCommand Comand = new SqlCommand(string.Format("Select * From LoginEntidades where usuario = '{0}' and HashBytes('MD5','{1}') = contraseña", pUsuario, pContraseña), Conn);
+            SqlDataReader reader = Comand.ExecuteReader();
+            while (reader.Read())
+            {
+                resultado = 50;
+            }
+            Conn.Close();
+            return resultado;
+
+        }
+
+
+
+    }
+}
+//GaleriaDAL//
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
+
+
+namespace SaludVirtual
+{
+    class GaleriaDAL
+    {
+
+        public static List<GaleriaA> MostrarImag(string pId_Foto, string pFoto)
+        {
+            List<GaleriaA> Lista = new List<GaleriaA>();
+            using (SqlConnection conexion = SaludVirtual.ObtenerConexion())
+            {
+                SqlCommand Comando = new SqlCommand(string.Format("Select Id_Foto,Foto from Galeria where Id_Foto like '%{0}%' and Foto like '%{1}%' ", pId_Foto, pFoto), conexion);
+                SqlDataReader reader = Comando.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    GaleriaA pGaleriaA = new GaleriaA();
+                    pGaleriaA.Id_Foto = reader.GetString(0);
+                    pGaleriaA.Foto = reader.GetString(1);
+
+
+                    Lista.Add(pGaleriaA);
+                }
+                conexion.Close();
+                return Lista;
+            }
+            
+        }
+    }
+}
+//SaludVirtual//
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
+
+
+namespace SaludVirtual
+{
+    class SaludVirtual
+    {
+        public static SqlConnection ObtenerConexion()
+        {
+            SqlConnection Conn = new SqlConnection("Data source = DESKTOP-L0GLE2A; Initial Catalog = SaludVirtual; Integrated Security = true");
+            Conn.Open();
+
+            return Conn;
+        }
+    }
+}
+//UsuarioDAL//
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
+
+
+namespace SaludVirtual
+{
+    class UsuarioDAL
+    {
+        public static int CrearUsuario(string pIdentificacion, string pNombres, string pApellidos, string pTipoCancer, string pTelefono, string pFechaNacimiento, string pEmail, string Genero)
+        {
+            int result = 0;
+            SqlConnection Conn = SaludVirtual.ObtenerConexion();
+            {
+                SqlCommand Comand = new SqlCommand(string.Format("Insert Into RegistroUsuarios(Identificacion,Nombres,Apellidos,TipoCancer,Telefono,FechaNacimiento,Email,Genero)values('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')", pIdentificacion, pNombres, pApellidos, pTipoCancer, pTelefono, pFechaNacimiento, pEmail, Genero), Conn);
+                result = Comand.ExecuteNonQuery();
+            }
+            return result;
+        }
+
+        public static List<Usuarios> BuscarUsuarios(String pNombres, String pApellidos)
+        {
+            List<Usuarios> Lista = new List<Usuarios>();
+            using (SqlConnection conexion = SaludVirtual.ObtenerConexion())
+            {
+                SqlCommand comando = new SqlCommand(string.Format("select Identificacion,Nombres,Apellidos,TipoCancer,Telefono,FechaNacimiento,Email,Genero from RegistroUsuarios where Nombres like '%{0}%' and Apellidos like '%{1}%'", pNombres, pApellidos), conexion);
+
+                SqlDataReader reader = comando.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Usuarios pUsuario = new Usuarios();
+                    pUsuario.Identificacion = reader.GetString(0);
+                    pUsuario.Nombres = reader.GetString(1);
+                    pUsuario.Apellidos = reader.GetString(2);
+                    pUsuario.TipoCancer = reader.GetString(3);
+                    pUsuario.Telefono = reader.GetString(4);
+                    pUsuario.FechaNacimiento = reader.GetString(5);
+                    pUsuario.Email = reader.GetString(6);
+                    pUsuario.Genero = reader.GetString(7);
+                    Lista.Add(pUsuario);
+
+                }
+                conexion.Close();
+                return Lista;
+            }
+        }
+
+
+    }
+}
+
+//UsuarioDAL1//
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
+
+namespace SaludVirtual
+{
+    class UsuarioDAL1
+    {
+        public static int CrearCuenta(string pUsuario, string pContraseña)
+        {
+            int resultado = 0;
+            SqlConnection Conn = SaludVirtual.ObtenerConexion();
+            {
+                SqlCommand Comand = new SqlCommand(string.Format("Insert Into LoginUsuarios(Usuario,Contraseña)values('{0}',HashBytes('MD5','{1}'))", pUsuario, pContraseña), Conn);
+                resultado = Comand.ExecuteNonQuery();
+            }
+            return resultado;
+        }
+        public static int Autentificar(string pUsuario, string pContraseña)
+        {
+            int resultado = -1;
+            SqlConnection Conn = SaludVirtual.ObtenerConexion();
+            SqlCommand Comand = new SqlCommand(string.Format("Select * From LoginUsuarios where Usuario = '{0}' and HashBytes('MD5','{1}') = Contraseña", pUsuario, pContraseña), Conn);
+            SqlDataReader reader = Comand.ExecuteReader();
+            while (reader.Read())
+            {
+                resultado = 50;
+            }
+            Conn.Close();
+            return resultado;
+
+        }
+
+
+
+    }
+}
+//Usuarios//
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SaludVirtual
+{
+    class Usuarios
+    {
+        public string Identificacion { get; set; }
+        public string Nombres { get; set; }
+        public string Apellidos { get; set; }
+        public string TipoCancer { get; set; }
+        public string Telefono { get; set; }
+        public string FechaNacimiento { get; set; }
+        public string Email { get; set; }
+        public string Genero { get; set; }
+        
+
+        public Usuarios() { }
+
+        public Usuarios(string pIdentificacion, string pNombres, string pApellidos, string pTipoCancer, string pTelefono, string pFechaNacimiento, string pEmail, string pGenero)
+        {
+            this.Identificacion = pIdentificacion;
+            this.Nombres = pNombres;
+            this.Apellidos = pApellidos;
+            this.TipoCancer = pTipoCancer;
+            this.Telefono = pTelefono;
+            this.FechaNacimiento = pFechaNacimiento;
+            this.Email = pEmail;
+            this.Genero = pGenero;
+            
+
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
